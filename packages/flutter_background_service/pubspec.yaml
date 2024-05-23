@@ -18,7 +18,7 @@ dependencies:
   flutter_background_service_android:
     git:
       url: https://github.com/unexus/flutter_background_service.git
-      path: packages/flutter_background_service_platform_interface
+      path: packages/flutter_background_service_android
       ref: exactalarmfix
   flutter_background_service_ios: ^5.0.0
 dev_dependencies:
