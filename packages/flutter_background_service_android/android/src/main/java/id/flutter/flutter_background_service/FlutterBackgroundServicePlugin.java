@@ -1,17 +1,15 @@
 package id.flutter.flutter_background_service;
 
 import android.app.ActivityManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Handler;
-import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -19,15 +17,12 @@ import java.util.Map;
 
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.embedding.engine.plugins.service.ServiceAware;
-import io.flutter.embedding.engine.plugins.service.ServicePluginBinding;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.JSONMethodCodec;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /**
  * FlutterBackgroundServicePlugin
@@ -100,6 +95,18 @@ public class FlutterBackgroundServicePlugin implements FlutterPlugin, MethodCall
                 String initialNotificationContent = arg.isNull("initial_notification_content") ? null : arg.getString("initial_notification_content");
                 String notificationChannelId = arg.isNull("notification_channel_id") ? null : arg.getString("notification_channel_id");
                 int foregroundNotificationId = arg.isNull("foreground_notification_id") ? null : arg.getInt("foreground_notification_id");
+                JSONArray foregroundServiceTypes = arg.isNull("foreground_service_types") ? null : arg.getJSONArray("foreground_service_types");
+                String foregroundServiceTypesStr = null;
+                if (foregroundServiceTypes != null) {
+                    StringBuilder resultForegroundServiceType = new StringBuilder();
+                    for (int i = 0; i < foregroundServiceTypes.length(); i++) {
+                        resultForegroundServiceType.append(foregroundServiceTypes.getString(i));
+                        if (i < foregroundServiceTypes.length() - 1) {
+                            resultForegroundServiceType.append(",");
+                        }
+                    }
+                    foregroundServiceTypesStr = resultForegroundServiceType.toString();
+                }
 
                 config.setBackgroundHandle(backgroundHandle);
                 config.setIsForeground(isForeground);
@@ -108,6 +115,7 @@ public class FlutterBackgroundServicePlugin implements FlutterPlugin, MethodCall
                 config.setInitialNotificationContent(initialNotificationContent);
                 config.setNotificationChannelId(notificationChannelId);
                 config.setForegroundNotificationId(foregroundNotificationId);
+                config.setForegroundServiceTypes(foregroundServiceTypesStr);
 
                 if (autoStart) {
                     start();
